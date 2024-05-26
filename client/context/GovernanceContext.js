@@ -80,7 +80,7 @@ const Government_provider =({children})=>{
                 Swal.fire({
                     position: 'top-end',
                     icon: 'success',
-                    text: `You have successfully contributed ${amount} CELO to the DAO`,
+                    text: `You have successfully contributed ${amount} MANTA to the DAO`,
                     showConfirmButton: true,
                     timer: 4000
                 })
@@ -196,6 +196,15 @@ const Government_provider =({children})=>{
     
             } catch (error) {
                 setDisability(false)
+                if(error.message.includes('invalid address')){
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'warning',
+                        text: `Invalid beneficiary address!`,
+                        showConfirmButton: true,
+                        timer: 4000
+                    })
+                }
                 console.log(error);
             }   
         }
