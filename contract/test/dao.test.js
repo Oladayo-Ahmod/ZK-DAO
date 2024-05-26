@@ -32,7 +32,7 @@ describe("DAO",()=>{
         })
 
         it("collaborator contributes", async()=>{
-            let price = new ethers.utils.parseEther('0.5');
+            let price = new ethers.utils.parseEther('0.01');
             await DAO.contribute({value:price})
             let balance = await DAO.getContributorsBalance();
            assert.equal(balance,price.toString())
@@ -40,7 +40,7 @@ describe("DAO",()=>{
 
         it("checks stakeholder status", async()=>{
             let [,stakeholder] = await ethers.getSigners()
-            let price = new ethers.utils.parseEther('0.5');
+            let price = new ethers.utils.parseEther('0.05');
             await DAO.connect(stakeholder).contribute({value : new ethers.utils.parseEther('2')})
             await DAO.contribute({value:price})
             let status = await DAO.stakeholderStatus()
@@ -48,7 +48,7 @@ describe("DAO",()=>{
             assert.equal(stakeholderStatus,true)
         })
         it("checks contributors status", async()=>{
-            let price = new ethers.utils.parseEther('0.5');
+            let price = new ethers.utils.parseEther('0.01');
             await DAO.contribute({value:price})
             let status = await DAO.isContributor()
             assert.equal(status,true)
