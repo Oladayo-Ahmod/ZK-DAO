@@ -32,6 +32,7 @@ module.exports = {
         },
         manta: {
           url: MANTA_RPC_URL,
+          accounts: [PRIVATE_KEY],
           chainId: 3441006
         }
         
