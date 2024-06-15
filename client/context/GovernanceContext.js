@@ -2,7 +2,7 @@
 
 import React,{createContext,useEffect,useState} from 'react'
 import {ADDRESS,ABI} from '../constants/index'
-import {ethers} from 'ethers'
+import {ethers,parseEther,formatEther} from 'ethers'
 import { Wallet } from "zksync-ethers";
 
 import Router from 'next/router'
@@ -70,24 +70,38 @@ const Government_provider =({children})=>{
     const Contribute =async(modalRef)=>{
         try {
             if (amount && connect) {
-                setDisability(true)
-                const provider = new ethers.BrowserProvider(connect)            
-                const wallet = new Wallet(PRIVATE_KEY, provider);
-                const contract = new ethers.Contract(ADDRESS,ABI,wallet)
-                const parsedAmount = new ethers.parseEther(amount)
-                const tx = await contract.contribute({value : parsedAmount})
-                await tx.wait(1)
-                setDisability(false)
-                const modalElement = modalRef.current ? modalRef.current : ''
-                modalElement.classList.remove('show')
-                modalElement.style.display = 'none'
-                Swal.fire({
-                    position: 'top-end',
-                    icon: 'success',
-                    text: `You have successfully contributed ${amount} ETH to the DAO`,
-                    showConfirmButton: true,
-                    timer: 4000
-                })
+
+                if(amount <= 0.006 ){ // check if the amount is greater allowed amount to avoid gas drainage
+                    setDisability(true)
+                    const provider = new ethers.BrowserProvider(connect)            
+                    const wallet = new Wallet(PRIVATE_KEY, provider);
+                    const contract = new ethers.Contract(ADDRESS,ABI,wallet)
+                    const parsedAmount = parseEther(amount)
+                    const tx = await contract.contribute({value : parsedAmount})
+                    await tx.wait(1)
+                    setDisability(false)
+                    const modalElement = modalRef.current ? modalRef.current : ''
+                    modalElement.classList.remove('show')
+                    modalElement.style.display = 'none'
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'success',
+                        text: `You have successfully contributed ${amount} ETH to the DAO`,
+                        showConfirmButton: true,
+                        timer: 4000
+                    })
+                }
+                else{
+                    setDisability(false)
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'warning',
+                        text: `Sorry, you can not contribue more than 0.005ETH`,
+                        showConfirmButton: true,
+                        timer: 4000
+                    })
+                }
+                
 
             }
             else{
@@ -102,11 +116,10 @@ const Government_provider =({children})=>{
     const getTotalBalance =async()=>{
         try {
             const provider = new ethers.BrowserProvider(connect)            
-            const signer = provider.getSigner()
-            const contract = new ethers.Contract(ADDRESS,ABI,signer)
+            const wallet = new Wallet(PRIVATE_KEY, provider);
+            const contract = new ethers.Contract(ADDRESS,ABI,wallet)
             const tx = await contract.getTotalBalance()
-            let balance = await tx.toString()
-            balance =  ethers.formatUnits(balance,'ether')
+            let balance =  formatEther(tx)
             setTotalBalance(balance)
         } catch (error) {
             console.log(error);
@@ -121,8 +134,7 @@ const Government_provider =({children})=>{
                 const wallet = new Wallet(PRIVATE_KEY, provider);
                 const contract = new ethers.Contract(ADDRESS,ABI,wallet)
                 const tx = await contract.getStakeholdersBalances()
-                let balance = await tx.toString()
-                balance =  ethers.formatUnits(balance,'ether')
+                let balance =  formatEther(tx)
                 setStakeholderBalance(balance)
                } catch (error) {
                 console.log(error);
@@ -135,11 +147,10 @@ const Government_provider =({children})=>{
             if (contributorStatus) {
                 try {
                     const provider = new ethers.BrowserProvider(connect)            
-                    const signer = provider.getSigner()
-                    const contract = new ethers.Contract(ADDRESS,ABI,signer)
+                    const wallet = new Wallet(PRIVATE_KEY, provider);
+                    const contract = new ethers.Contract(ADDRESS,ABI,wallet)
                     const tx = await contract.getContributorsBalance()
-                    let balance = await tx.toString()
-                    balance =  ethers.formatUnits(balance,'ether')
+                    let balance =  formatEther(tx)
                     setContributorBalance(balance)
                    } catch (error) {
                     console.log(error);
@@ -170,7 +181,7 @@ const Government_provider =({children})=>{
                 const tx = await contract.isContributor()
                 setContributorStatus(tx)
             } catch (error) {
-                console.log(error);
+                // console.log(error);
             }    
         
     }
@@ -180,23 +191,36 @@ const Government_provider =({children})=>{
             try {
                 setDisability(true)
                 const {title,description,beneficiary,amount} = formData
-                let parsedAmount = new ethers.parseEther(amount);
-                const provider = new ethers.BrowserProvider(connect)            
-                const wallet = new Wallet(PRIVATE_KEY, provider);
-                const contract = new ethers.Contract(ADDRESS,ABI,wallet)
-                const propose = await contract.createProposal(title,description,beneficiary.trim(),parsedAmount)
-                await propose.wait(1)
-                setDisability(false)
-                const modalElement = modalRef.current ? modalRef.current : ''
-                modalElement.classList.remove('show')
-                modalElement.style.display = 'none'
-                Swal.fire({
-                    position: 'top-end',
-                    icon: 'success',
-                    text: `You have made a proposal successfully!`,
-                    showConfirmButton: true,
-                    timer: 4000
-                })
+                if(amount <= 0.006){
+                    let parsedAmount = parseEther(amount);
+                    const provider = new ethers.BrowserProvider(connect)            
+                    const wallet = new Wallet(PRIVATE_KEY, provider);
+                    const contract = new ethers.Contract(ADDRESS,ABI,wallet)
+                    const propose = await contract.createProposal(title,description,beneficiary.trim(),parsedAmount)
+                    await propose.wait(1)
+                    setDisability(false)
+                    const modalElement = modalRef.current ? modalRef.current : ''
+                    modalElement.classList.remove('show')
+                    modalElement.style.display = 'none'
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'success',
+                        text: `You have made a proposal successfully!`,
+                        showConfirmButton: true,
+                        timer: 4000
+                    })
+                }
+                else{
+                    setDisability(false)
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'warning',
+                        text: `Sorry, proposal can not have more than 0.005ETH`,
+                        showConfirmButton: true,
+                        timer: 4000
+                    })
+                }
+                
     
             } catch (error) {
                 setDisability(false)
@@ -227,15 +251,15 @@ const Government_provider =({children})=>{
     const proposals =async()=>{
         try {
             const provider = new ethers.BrowserProvider(connect)            
-            const signer = provider.getSigner()
-            const contract = new ethers.Contract(ADDRESS,ABI,signer)
+            const wallet = new Wallet(PRIVATE_KEY, provider);
+            const contract = new ethers.Contract(ADDRESS,ABI,wallet)
             const proposals = await contract.getAllProposals()
             const data = await Promise.all(await proposals.map( e =>{
                 let info = {
                     id : e.id.toString(),
                     title : e.title,
                     description : e.description,
-                    amount : ethers.formatEther(e.amount.toString(),'ether'),
+                    amount : formatEther(e.amount),
                     beneficiary : e.beneficiary,
                     upVote : e.upVote.toString(),
                     downVote : e.downVotes.toString(),
@@ -257,8 +281,8 @@ const Government_provider =({children})=>{
     const voting =async(proposalId,vote)=>{
         try {
             const provider = new ethers.BrowserProvider(connect)            
-            const signer = provider.getSigner()
-            const contract = new ethers.Contract(ADDRESS,ABI,signer)
+            const wallet = new Wallet(PRIVATE_KEY, provider);
+            const contract = new ethers.Contract(ADDRESS,ABI,wallet)
             const tx = await contract.performVote(proposalId,vote)
             await tx.wait(1)
 
@@ -290,8 +314,8 @@ const Government_provider =({children})=>{
     const payBeneficiary =async(proposalId)=>{
         try {
             const provider = new ethers.BrowserProvider(connect)            
-            const signer = provider.getSigner()
-            const contract = new ethers.Contract(ADDRESS,ABI,signer)
+            const wallet = new Wallet(PRIVATE_KEY, provider);
+            const contract = new ethers.Contract(ADDRESS,ABI,wallet)
             const tx = await contract.payBeneficiary(proposalId)
             await tx.wait(1)
             Swal.fire({
