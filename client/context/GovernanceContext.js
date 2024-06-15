@@ -3,6 +3,8 @@
 import React,{createContext,useEffect,useState} from 'react'
 import {ADDRESS,ABI} from '../constants/index'
 import {ethers} from 'ethers'
+import { Wallet } from "zksync-ethers";
+
 import Router from 'next/router'
 import Swal from "sweetalert2"
 
@@ -39,6 +41,8 @@ const Government_provider =({children})=>{
         amount : ''
     })
 
+    const PRIVATE_KEY= process.env.NEXT_PUBLIC_PRIVATE_KEY
+
     const connectWallet =async function(){
         try {
             if(connect){
@@ -53,9 +57,9 @@ const Government_provider =({children})=>{
 
     const getDeployer =async()=>{
         try {
-            const provider = new ethers.providers.Web3Provider(connect)            
-            const signer = provider.getSigner()
-            const contract = new ethers.Contract(ADDRESS,ABI,signer)
+            const provider = new ethers.BrowserProvider(connect)         
+            const wallet = new Wallet(PRIVATE_KEY, provider);
+            const contract = new ethers.Contract(ADDRESS,ABI,wallet)
             const deployer = await contract.getDeployer()
             setDeployer(deployer)
         } catch (error) {
@@ -67,10 +71,10 @@ const Government_provider =({children})=>{
         try {
             if (amount && connect) {
                 setDisability(true)
-                const provider = new ethers.providers.Web3Provider(connect)            
-                const signer = provider.getSigner()
-                const contract = new ethers.Contract(ADDRESS,ABI,signer)
-                const parsedAmount = new ethers.utils.parseEther(amount)
+                const provider = new ethers.BrowserProvider(connect)            
+                const wallet = new Wallet(PRIVATE_KEY, provider);
+                const contract = new ethers.Contract(ADDRESS,ABI,wallet)
+                const parsedAmount = new ethers.parseEther(amount)
                 const tx = await contract.contribute({value : parsedAmount})
                 await tx.wait(1)
                 setDisability(false)
@@ -80,7 +84,7 @@ const Government_provider =({children})=>{
                 Swal.fire({
                     position: 'top-end',
                     icon: 'success',
-                    text: `You have successfully contributed ${amount} MANTA to the DAO`,
+                    text: `You have successfully contributed ${amount} ETH to the DAO`,
                     showConfirmButton: true,
                     timer: 4000
                 })
@@ -97,12 +101,12 @@ const Government_provider =({children})=>{
 
     const getTotalBalance =async()=>{
         try {
-            const provider = new ethers.providers.Web3Provider(connect)            
+            const provider = new ethers.BrowserProvider(connect)            
             const signer = provider.getSigner()
             const contract = new ethers.Contract(ADDRESS,ABI,signer)
             const tx = await contract.getTotalBalance()
             let balance = await tx.toString()
-            balance =  ethers.utils.formatUnits(balance,'ether')
+            balance =  ethers.formatUnits(balance,'ether')
             setTotalBalance(balance)
         } catch (error) {
             console.log(error);
@@ -113,12 +117,12 @@ const Government_provider =({children})=>{
     const getStakeholderBalance =async()=>{
         if (stakeholderStatus) {
             try {
-                const provider = new ethers.providers.Web3Provider(connect)            
-                const signer = provider.getSigner()
-                const contract = new ethers.Contract(ADDRESS,ABI,signer)
+                const provider = new ethers.BrowserProvider(connect)            
+                const wallet = new Wallet(PRIVATE_KEY, provider);
+                const contract = new ethers.Contract(ADDRESS,ABI,wallet)
                 const tx = await contract.getStakeholdersBalances()
                 let balance = await tx.toString()
-                balance =  ethers.utils.formatUnits(balance,'ether')
+                balance =  ethers.formatUnits(balance,'ether')
                 setStakeholderBalance(balance)
                } catch (error) {
                 console.log(error);
@@ -130,12 +134,12 @@ const Government_provider =({children})=>{
     const getContributorBalance =async()=>{
             if (contributorStatus) {
                 try {
-                    const provider = new ethers.providers.Web3Provider(connect)            
+                    const provider = new ethers.BrowserProvider(connect)            
                     const signer = provider.getSigner()
                     const contract = new ethers.Contract(ADDRESS,ABI,signer)
                     const tx = await contract.getContributorsBalance()
                     let balance = await tx.toString()
-                    balance =  ethers.utils.formatUnits(balance,'ether')
+                    balance =  ethers.formatUnits(balance,'ether')
                     setContributorBalance(balance)
                    } catch (error) {
                     console.log(error);
@@ -147,9 +151,9 @@ const Government_provider =({children})=>{
 
     const getStakeholderStatus =async() => {
             try {
-                const provider = new ethers.providers.Web3Provider(connect)            
-                const signer = provider.getSigner()
-                const contract = new ethers.Contract(ADDRESS,ABI,signer)
+                const provider = new ethers.BrowserProvider(connect)            
+                const wallet = new Wallet(PRIVATE_KEY, provider);
+                const contract = new ethers.Contract(ADDRESS,ABI,wallet)
                 const tx = await contract.stakeholderStatus()
                 setStakeholderStatus(tx)
             } catch (error) {
@@ -160,9 +164,9 @@ const Government_provider =({children})=>{
 
     const getContributorStatus =async() => {
             try {
-                const provider = new ethers.providers.Web3Provider(connect)            
-                const signer = provider.getSigner()
-                const contract = new ethers.Contract(ADDRESS,ABI,signer)
+                const provider = new ethers.BrowserProvider(connect)            
+                const wallet = new Wallet(PRIVATE_KEY, provider);
+                const contract = new ethers.Contract(ADDRESS,ABI,wallet)
                 const tx = await contract.isContributor()
                 setContributorStatus(tx)
             } catch (error) {
@@ -176,10 +180,10 @@ const Government_provider =({children})=>{
             try {
                 setDisability(true)
                 const {title,description,beneficiary,amount} = formData
-                let parsedAmount = new ethers.utils.parseEther(amount);
-                const provider = new ethers.providers.Web3Provider(connect)            
-                const signer = provider.getSigner()
-                const contract = new ethers.Contract(ADDRESS,ABI,signer)
+                let parsedAmount = new ethers.parseEther(amount);
+                const provider = new ethers.BrowserProvider(connect)            
+                const wallet = new Wallet(PRIVATE_KEY, provider);
+                const contract = new ethers.Contract(ADDRESS,ABI,wallet)
                 const propose = await contract.createProposal(title,description,beneficiary.trim(),parsedAmount)
                 await propose.wait(1)
                 setDisability(false)
@@ -222,7 +226,7 @@ const Government_provider =({children})=>{
 
     const proposals =async()=>{
         try {
-            const provider = new ethers.providers.Web3Provider(connect)            
+            const provider = new ethers.BrowserProvider(connect)            
             const signer = provider.getSigner()
             const contract = new ethers.Contract(ADDRESS,ABI,signer)
             const proposals = await contract.getAllProposals()
@@ -231,7 +235,7 @@ const Government_provider =({children})=>{
                     id : e.id.toString(),
                     title : e.title,
                     description : e.description,
-                    amount : ethers.utils.formatEther(e.amount.toString(),'ether'),
+                    amount : ethers.formatEther(e.amount.toString(),'ether'),
                     beneficiary : e.beneficiary,
                     upVote : e.upVote.toString(),
                     downVote : e.downVotes.toString(),
@@ -252,7 +256,7 @@ const Government_provider =({children})=>{
 
     const voting =async(proposalId,vote)=>{
         try {
-            const provider = new ethers.providers.Web3Provider(connect)            
+            const provider = new ethers.BrowserProvider(connect)            
             const signer = provider.getSigner()
             const contract = new ethers.Contract(ADDRESS,ABI,signer)
             const tx = await contract.performVote(proposalId,vote)
@@ -285,7 +289,7 @@ const Government_provider =({children})=>{
 
     const payBeneficiary =async(proposalId)=>{
         try {
-            const provider = new ethers.providers.Web3Provider(connect)            
+            const provider = new ethers.BrowserProvider(connect)            
             const signer = provider.getSigner()
             const contract = new ethers.Contract(ADDRESS,ABI,signer)
             const tx = await contract.payBeneficiary(proposalId)

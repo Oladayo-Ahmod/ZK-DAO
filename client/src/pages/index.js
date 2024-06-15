@@ -128,7 +128,7 @@ function Home (){
               <div className="collapse navbar-collapse" id="collapsibleNavId">
                   <ul className="navbar-nav me-auto mt-2 mt-lg-0 text-secondary">
                       <li className="nav-item">
-                          <a className="nav-link active fw-bold text-secondary" href="#" aria-current="page">Manta DAO <span className="visually-hidden">(current)</span></a>
+                          <a className="nav-link active fw-bold text-secondary" href="#" aria-current="page">ETH DAO <span className="visually-hidden">(current)</span></a>
                       </li>
                   </ul>
                   <form className="d-flex my-2 my-lg-0 px-2">
@@ -151,7 +151,7 @@ function Home (){
                             <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div className="modal-body">
-                          <input className='form-control' onChange={e=> setAmount( e.target.value)} placeholder='0.05manta and above to be a stakeholder'/>
+                          <input className='form-control' onChange={e=> setAmount( e.target.value)} placeholder='0.05ETH and above to be a stakeholder'/>
                         </div>
                         <div className="modal-footer">
                           <button type="button" className="btn btn-primary" disabled={disability} onClick={()=>Contribute(modalRef)}>Submit</button>
@@ -194,11 +194,11 @@ function Home (){
               </div>
               <div className='col col-md-3 col-container bg-info rounded'>
                   <h5 className='title '> DAO Balance  </h5>
-                  <h4 className='text-white fw-bolder m-auto mt-5'>{`${totalBalance} MANTA`}</h4>
+                  <h4 className='text-white fw-bolder m-auto mt-5'>{`${totalBalance} ETH`}</h4>
               </div>
               <div className='col col-md-3 col-container bg-success rounded'>
                  <h5 className='title'> My Contributions </h5>
-                 <h4 className='text-white fw-bolder m-auto mt-5'>{`${stakeholderBalance > 0 ? stakeholderBalance :  contributorBalance} MANTA`}</h4>
+                 <h4 className='text-white fw-bolder m-auto mt-5'>{`${stakeholderBalance > 0 ? stakeholderBalance :  contributorBalance} ETH`}</h4>
               </div>
               <div className='col col-md-3 col-container bg-warning rounded'>
                <h5 className='title'>  Status</h5>

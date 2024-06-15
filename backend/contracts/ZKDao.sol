@@ -11,7 +11,7 @@ contract ZKDao is AccessControl,ReentrancyGuard {
     uint256 balance;
     address deployer;
 
-    uint256 immutable STAKEHOLDER_MIN_CONTRIBUTION = 0.05 ether;
+    uint256 immutable STAKEHOLDER_MIN_CONTRIBUTION = 0.005 ether;
     uint256 immutable MIN_VOTE_PERIOD = 5 minutes;
     bytes32 private immutable COLLABORATOR_ROLE = keccak256("collaborator");
     bytes32 private immutable STAKEHOLDER_ROLE = keccak256("stakeholder");
