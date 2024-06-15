@@ -5,7 +5,7 @@ pragma solidity ^0.8.9;
 import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
-contract MZKDao is AccessControl,ReentrancyGuard {
+contract ZKDao is AccessControl,ReentrancyGuard {
 
     uint256 totalProposals;
     uint256 balance;
