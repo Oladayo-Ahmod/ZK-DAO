@@ -2,7 +2,7 @@
 # Overview
 
 website url : https://manta-dao-gamma.vercel.app/
-Manta DAO  is a platform that enables decentralized governance and operation of organizations that is built on MANTA blockchain. It allows users to become stakeholders by contributing a certain amount of resources.
+ZK DAO is a gasless platform that enables decentralized governance and operation of organizations that is built on zkSync sepolia testnet using zksync Paymaster. The platform allows users to become stakeholders by contributing a certain amount of resources.
 
 Stakeholders within the DAO have the ability to raise proposals, which are then voted upon by other stakeholders. The voting period for each proposal is stipulated to be 5 minutes.
 
@@ -16,7 +16,7 @@ It is important to note that, nobody can make proposal unless they are stakehold
 
 The DAO provides the following functionality:
 
-- Stakeholder Contributions: Users can contribute at least `0.1 manta` to become stakeholders within the DAO.
+- Stakeholder Contributions: Users can contribute at least `0.005 ETH` to become stakeholders within the DAO and they can't contribute more `0.006`
 - Proposal Creation: Stakeholders can raise proposals for consideration by the DAO community.
 - Voting: Stakeholders are able to vote on proposed initiatives during the stipulated voting period of 5 minutes.
 - Payment Processing: After the voting period concludes, if a proposal receives more upvotes than downvotes, payment is processed to the designated beneficiary. This payment processing function is exclusively handled by the deployer account.
